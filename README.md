@@ -2,15 +2,15 @@
 
 Status: Active PCB automation project / local AI workflow prototype
 
-This project documents a PCB design assistant that connects AI agents to EasyEDA Pro through MCP tools. It started from the open-source EasyEDA Copilot project and was rebuilt into a more complete hardware-design workflow focused on project setup, part selection, schematic edits, PCB layout, routing checks, DRC feedback, manufacturing-readiness outputs, and local Ollama model testing.
+I am building this PCB design assistant to connect AI agents to EasyEDA Pro through MCP tools. I started from the open-source EasyEDA Copilot project and rebuilt it into a more complete hardware-design workflow focused on project setup, part selection, schematic edits, PCB layout, routing checks, DRC feedback, manufacturing-readiness outputs, and local Ollama model testing.
 
 ![AI-generated simple LED PCB preview](media/simple-led-board-preview.png)
 
 ## Overview
 
-PCB Designer is an experiment in using AI as a practical electronics design assistant instead of only a chat interface. The goal is to let an agent inspect the current EasyEDA project, choose parts, create or update a schematic, move into PCB layout, route the board, run design checks, inspect logs, and report exactly what succeeded or failed.
+PCB Designer is my experiment in using AI as a practical electronics design assistant instead of only a chat interface. My goal is to let an agent inspect the current EasyEDA project, choose parts, create or update a schematic, move into PCB layout, route the board, run design checks, inspect logs, and report exactly what succeeded or failed.
 
-The project is built around EasyEDA Pro Desktop, a customized EasyEDA Copilot extension, an MCP server, and a local bridge that can connect the same tool workflow to Codex-style agents or Ollama models. The public version of this repository is a showcase and documentation page; the active source code is kept separately while the tooling is still changing quickly.
+I built the workflow around EasyEDA Pro Desktop, a customized EasyEDA Copilot extension, an MCP server, and a local bridge that can connect the same tool workflow to Codex-style agents or Ollama models. I keep this public repository as a showcase and documentation page while the active source code stays separate during rapid development.
 
 ## System Architecture
 
@@ -23,7 +23,7 @@ The project is built around EasyEDA Pro Desktop, a customized EasyEDA Copilot ex
 
 ## What Changed From EasyEDA Copilot
 
-The project began with code from the EasyEDA Copilot GitHub repository. The fork has since been reshaped around MCP-native PCB automation and local-agent workflows.
+I began with code from the EasyEDA Copilot GitHub repository. Since then, I have reshaped the fork around MCP-native PCB automation and local-agent workflows.
 
 Major changes include:
 
@@ -54,7 +54,7 @@ The intended workflow is:
 12. Prepare manufacturing-readiness outputs.
 13. Report the exact state of the board, including blockers.
 
-The most important behavior is honesty: the agent should not report success unless the EasyEDA tools prove that the step succeeded.
+The most important behavior is honesty: I do not want the agent to report success unless the EasyEDA tools prove that the step succeeded.
 
 ## Visual Outputs
 
@@ -68,15 +68,15 @@ The tooling can export board previews and manufacturing QA images for review.
 
 ## Local Model Work
 
-The local launcher work focuses on testing how far a laptop can push PCB automation with Ollama models. Smaller models are used for fast MCP smoke tests, while larger models can be tried for complete board-building runs when latency is acceptable.
+My local launcher work focuses on testing how far my laptop can push PCB automation with Ollama models. I use smaller models for fast MCP smoke tests, while larger models can be tried for complete board-building runs when latency is acceptable.
 
 ![Ollama MCP launcher icon](media/ollama-mcp-launcher-icon.png)
 
 ## Validation Status
 
-The current toolchain has been tested with static release gates and local bridge smoke tests. The project has also produced board previews and manufacturing QA outputs from EasyEDA data. Local model runs are still being tuned because small models can stall, choose parts slowly, or get confused by large tool catalogs without compact profiles and explicit workflow guidance.
+I have tested the current toolchain with static release gates and local bridge smoke tests. The project has also produced board previews and manufacturing QA outputs from EasyEDA data. Local model runs are still being tuned because small models can stall, choose parts slowly, or get confused by large tool catalogs without compact profiles and explicit workflow guidance.
 
-Do not treat this as a fully validated manufactured hardware product yet. It is best described as an active PCB automation prototype with working EasyEDA integration and a growing validation workflow.
+I do not treat this as a fully validated manufactured hardware product yet. It is best described as an active PCB automation prototype with working EasyEDA integration and a growing validation workflow.
 
 ## What This Demonstrates
 
