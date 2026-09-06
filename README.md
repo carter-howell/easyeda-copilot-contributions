@@ -10,7 +10,7 @@ I am building this PCB design assistant to connect AI agents to EasyEDA Pro thro
 
 PCB Designer is my experiment in using AI as a practical electronics design assistant instead of only a chat interface. My goal is to let an agent inspect the current EasyEDA project, choose parts, create or update a schematic, move into PCB layout, route the board, run design checks, inspect logs, and report exactly what succeeded or failed.
 
-I built the workflow around EasyEDA Pro Desktop, a customized EasyEDA Copilot extension, an MCP server, and a local bridge that can connect the same tool workflow to Codex-style agents or Ollama models. I keep this public repository as a showcase and documentation page while the active source code stays separate during rapid development.
+I built the workflow around EasyEDA Pro Desktop, a customized EasyEDA Copilot extension, an MCP server, and a local bridge that can connect the same tool workflow to Codex-style agents or Ollama models. The interesting part is that the tool has to work against the actual EDA project state instead of just producing text that sounds plausible.
 
 ## System Architecture
 
