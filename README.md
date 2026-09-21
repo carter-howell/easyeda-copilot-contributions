@@ -2,7 +2,7 @@
 
 Status: Working EDA automation / active open-source contributions
 
-I use this repository to document my working EasyEDA automation and my contributions to [EasyEDA Copilot](https://github.com/biosshot/easyeda-copilot), an open-source project that connects AI assistants to EasyEDA Pro through MCP tools. After building and testing a separate PCB automation toolchain, I decided the more useful direction was to contribute the strongest improvements back to the existing project.
+I built and tested an EasyEDA automation toolchain, then moved the strongest improvements into contributions for [EasyEDA Copilot](https://github.com/biosshot/easyeda-copilot), an open-source project that connects AI assistants to EasyEDA Pro through MCP tools.
 
 My work focuses on making the integration safer and more useful against real EasyEDA project state: incomplete document trees, linked-board cleanup, component-library search, long-running script control, and verification that tool calls did what they claimed.
 
@@ -42,7 +42,7 @@ I tested the change against EasyEDA Pro 3.2.149 and received live results from S
 
 I added an MCP interruption tool for long-running `execute_js` calls. The request bypasses the normal serialized EasyEDA command queue, while scripts receive a cooperative control object with cancellation state, an execution ID, and a helper for stopping between units of work.
 
-The design is deliberately honest about its limits: it can request cancellation at safe checkpoints, but it does not claim to preempt synchronous JavaScript or an EasyEDA API call that has not returned. I added controller, registration, and transport coverage and ran the extension and MCP validation commands.
+Cancellation is cooperative: it can stop at safe checkpoints, but it cannot preempt synchronous JavaScript or an EasyEDA API call that has not returned. I added controller, registration, and transport coverage and ran the extension and MCP validation commands.
 
 ## Earlier PCB Automation Work
 
@@ -68,14 +68,13 @@ These images came from my earlier board-preview and manufacturing-QA experiments
 
 ![Silkscreen manufacturing QA preview](media/manufacturing-qa-silkscreen.png)
 
-## What I Am Learning
+## Engineering Work
 
-- how an MCP server can expose a complex desktop engineering application safely
-- how EasyEDA represents projects, boards, schematics, PCBs, and component libraries
-- how to turn reproduced editor failures into focused regression tests
-- how to keep destructive document operations retryable after partial failure
-- how to design cancellation semantics without overstating what the runtime can stop
-- how to prepare scoped pull requests that are easier for an open-source maintainer to review
+- Connected MCP tools to EasyEDA's project, board, schematic, PCB, and component-library APIs.
+- Reproduced editor failures and turned them into focused regression tests.
+- Kept destructive document operations retryable after partial failure.
+- Added cooperative cancellation without claiming the runtime can stop synchronous work.
+- Split the work into focused pull requests for upstream review.
 
 ## Current Direction
 
