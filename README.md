@@ -1,8 +1,8 @@
 # EasyEDA Copilot Contributions
 
-Status: Active open-source contribution work
+Status: Working EDA automation / active open-source contributions
 
-I use this repository to document my work with [EasyEDA Copilot](https://github.com/biosshot/easyeda-copilot), an open-source project that connects AI assistants to EasyEDA Pro through MCP tools. After experimenting with a separate PCB automation toolchain, I decided the more useful direction was to contribute the strongest improvements back to the existing project.
+I use this repository to document my working EasyEDA automation and my contributions to [EasyEDA Copilot](https://github.com/biosshot/easyeda-copilot), an open-source project that connects AI assistants to EasyEDA Pro through MCP tools. After building and testing a separate PCB automation toolchain, I decided the more useful direction was to contribute the strongest improvements back to the existing project.
 
 My work focuses on making the integration safer and more useful against real EasyEDA project state: incomplete document trees, linked-board cleanup, component-library search, long-running script control, and verification that tool calls did what they claimed.
 
