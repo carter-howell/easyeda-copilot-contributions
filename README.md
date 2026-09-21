@@ -4,9 +4,9 @@ Status: Working EDA automation / active open-source contributions
 
 I built and tested an EasyEDA automation toolchain, then moved the strongest improvements into contributions for [EasyEDA Copilot](https://github.com/biosshot/easyeda-copilot), an open-source project that connects AI assistants to EasyEDA Pro through MCP tools.
 
-My work focuses on making the integration safer and more useful against real EasyEDA project state: incomplete document trees, linked-board cleanup, component-library search, long-running script control, and verification that tool calls did what they claimed.
+I focused on problems I found while using the tools with real EasyEDA projects: incomplete document trees, board deletion that could leave files behind, limited component search, and long-running scripts that could not be interrupted.
 
-![Simple LED PCB preview produced during my earlier workflow testing](media/simple-led-board-preview.png)
+![Simple LED PCB preview from earlier testing](media/simple-led-board-preview.png)
 
 ## Open Pull Requests
 
@@ -46,7 +46,7 @@ Cancellation is cooperative: it can stop at safe checkpoints, but it cannot pree
 
 ## Earlier PCB Automation Work
 
-Before moving my work upstream, I used a customized EasyEDA Copilot setup to explore a larger agent-driven PCB workflow. I connected EasyEDA Pro Desktop to Codex-style agents and local Ollama models, then experimented with:
+Before moving my work upstream, I connected a customized EasyEDA Copilot setup to Codex and local Ollama models. I used it to test:
 
 - reading the active project and document state
 - resolving parts and applying schematic changes
@@ -56,7 +56,7 @@ Before moving my work upstream, I used a customized EasyEDA Copilot setup to exp
 - active-tab inference for linked schematic and PCB documents
 - release gates, smoke tests, EasyEDA log inspection, and manufacturing-image checks
 
-That work helped me identify the smaller, testable improvements represented by the upstream pull requests. It also reinforced that EDA automation needs to verify editor state instead of treating a successful-looking text response as proof that a design operation worked.
+Those tests led to the four upstream changes above. They also showed why each tool needs to read the editor state after making a change instead of trusting a successful response by itself.
 
 ## Visual Outputs
 
@@ -76,8 +76,8 @@ These images came from my earlier board-preview and manufacturing-QA experiments
 - Added cooperative cancellation without claiming the runtime can stop synchronous work.
 - Split the work into focused pull requests for upstream review.
 
-## Current Direction
+## Upstream Work
 
-I am no longer developing a separate EasyEDA copilot. My current work happens in my [EasyEDA Copilot fork](https://github.com/carter-howell/easyeda-copilot), with focused pull requests submitted to the [BioShot upstream project](https://github.com/biosshot/easyeda-copilot).
+I now make these changes in my [EasyEDA Copilot fork](https://github.com/carter-howell/easyeda-copilot) and submit them to the [BioShot project](https://github.com/biosshot/easyeda-copilot) as separate pull requests.
 
 The four pull requests above are open and under review. I will update this showcase as contributions are revised, merged, or followed by additional work.
