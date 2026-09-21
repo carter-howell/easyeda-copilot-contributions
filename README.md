@@ -1,98 +1,84 @@
-# PCB Designer
+# EasyEDA Copilot Contributions
 
-Status: Active PCB automation project / local AI workflow prototype
+Status: Active open-source contribution work
 
-I am building this PCB design assistant to connect AI agents to EasyEDA Pro through MCP tools. I started from the open-source EasyEDA Copilot project and rebuilt it into a more complete hardware-design workflow focused on project setup, part selection, schematic edits, PCB layout, routing checks, DRC feedback, manufacturing-readiness outputs, and local Ollama model testing.
+I use this repository to document my work with [EasyEDA Copilot](https://github.com/biosshot/easyeda-copilot), an open-source project that connects AI assistants to EasyEDA Pro through MCP tools. After experimenting with a separate PCB automation toolchain, I decided the more useful direction was to contribute the strongest improvements back to the existing project.
 
-![AI-generated simple LED PCB preview](media/simple-led-board-preview.png)
+My work focuses on making the integration safer and more useful against real EasyEDA project state: incomplete document trees, linked-board cleanup, component-library search, long-running script control, and verification that tool calls did what they claimed.
 
-## Overview
+![Simple LED PCB preview produced during my earlier workflow testing](media/simple-led-board-preview.png)
 
-PCB Designer is my experiment in using AI as a practical electronics design assistant instead of only a chat interface. My goal is to let an agent inspect the current EasyEDA project, choose parts, create or update a schematic, move into PCB layout, route the board, run design checks, inspect logs, and report exactly what succeeded or failed.
+## Open Pull Requests
 
-I built the workflow around EasyEDA Pro Desktop, a customized EasyEDA Copilot extension, an MCP server, and a local bridge that can connect the same tool workflow to Codex-style agents or Ollama models. The interesting part is that the tool has to work against the actual EDA project state instead of just producing text that sounds plausible.
+I currently have four contributions under review in the upstream BioShot repository.
 
-## System Architecture
+### Project Tree Null Safety
 
-- EasyEDA Pro Desktop is the live schematic and PCB editor.
-- A customized EasyEDA extension exposes design, project, schematic, PCB, DRC, simulation, and manufacturing actions.
-- MCP tools give an AI harness structured access to EasyEDA instead of relying on screen scraping.
-- A bridge layer lets local Ollama models call the same tools for low-cost experiments.
-- Launcher scripts start the correct local model, context window, EasyEDA MCP profile, and working directory.
-- Smoke tests verify tool schemas, compact outputs, active-tab inference, DRC behavior, and common board-building workflows.
+[PR #63: Tolerate incomplete board links](https://github.com/biosshot/easyeda-copilot/pull/63)
 
-## What Changed From EasyEDA Copilot
+I reproduced a failure in EasyEDA Pro 3.2.149 where a board could temporarily expose only one linked document. I changed project serialization so a missing schematic or PCB link no longer causes the entire project read to fail, and added the current project UUID to the response.
 
-I began with code from the EasyEDA Copilot GitHub repository. Since then, I have reshaped the fork around MCP-native PCB automation and local-agent workflows.
+Verification included 81 extension tests, two new regression cases, compilation, focused linting, and a live check against the project state that originally triggered the failure.
 
-Major changes include:
+### Safer Board Deletion
 
-- Added broader MCP tools for project creation, document opening, project inspection, schematic cleanup, part resolution, schematic changes, PCB layout, routing, DRC, simulation readiness, and manufacturing output preparation.
-- Added compact tool outputs so smaller local models spend less context on repeated EasyEDA data.
-- Added workflow guidance and tool inventories designed for LLMs, including board-build checklists and model-friendly tool descriptions.
-- Added active-tab inference so tools can often infer the linked schematic or PCB document from the current EasyEDA tab.
-- Added repair and audit tools for common generated-PCB issues, including duplicate mechanical holes, value/silkscreen problems, ratline recalculation, and copper pour checks.
-- Added local Ollama launcher support with model, context, profile, thinking, chat save/load, and smoke-test commands.
-- Added release-gate and smoke-test scripts for bridge parity, installed tool schemas, compact-output budgets, updater behavior, EasyEDA logs, live MCP calls, and manufacturing visual QA.
-- Added desktop shortcut support for launching a local Ollama MCP workflow more quickly.
+[PR #64: Delete linked board documents safely](https://github.com/biosshot/easyeda-copilot/pull/64)
 
-## PCB Workflow
+I changed board deletion so the linked schematic and PCB are removed before the board container. Each deletion is checked against EasyEDA's document inventory, and partial failures preserve enough project structure for cleanup to be retried instead of leaving orphaned documents.
 
-The intended workflow is:
+Verification included 82 extension tests and three new regressions covering ordered cleanup, partial failure, and EasyEDA automatically removing an empty board.
 
-1. Connect to an open EasyEDA Pro instance.
-2. Read the active project and document state.
-3. Create or open a board project.
-4. Resolve verified parts.
-5. Apply schematic changes.
-6. Validate the schematic.
-7. Check simulation readiness or run local simulation when models are available.
-8. Configure current-sensitive board rules when needed.
-9. Generate or update the PCB layout.
-10. Route the board.
-11. Run DRC and read back board status.
-12. Prepare manufacturing-readiness outputs.
-13. Report the exact state of the board, including blockers.
+### Full Library Search
 
-The most important behavior is honesty: I do not want the agent to report success unless the EasyEDA tools prove that the step succeeded.
+[PR #65: Search all EasyEDA library sections](https://github.com/biosshot/easyeda-copilot/pull/65)
+
+I extended `component_search` beyond LCSC lookup so it can query EasyEDA's System, Recent, Personal, Project, Public, Standard Edition Public, Favorite, and LCSC sections. The tool can return devices, footprints, and panel libraries while reporting results and errors per section.
+
+I tested the change against EasyEDA Pro 3.2.149 and received live results from System, Personal, Project, Public, Standard Edition Public, and LCSC libraries. The extension test suite, MCP type checks, project checks, and focused linting also passed.
+
+### Cooperative Script Interruption
+
+[PR #66: Add cooperative `execute_js` interruption](https://github.com/biosshot/easyeda-copilot/pull/66)
+
+I added an MCP interruption tool for long-running `execute_js` calls. The request bypasses the normal serialized EasyEDA command queue, while scripts receive a cooperative control object with cancellation state, an execution ID, and a helper for stopping between units of work.
+
+The design is deliberately honest about its limits: it can request cancellation at safe checkpoints, but it does not claim to preempt synchronous JavaScript or an EasyEDA API call that has not returned. I added controller, registration, and transport coverage and ran the extension and MCP validation commands.
+
+## Earlier PCB Automation Work
+
+Before moving my work upstream, I used a customized EasyEDA Copilot setup to explore a larger agent-driven PCB workflow. I connected EasyEDA Pro Desktop to Codex-style agents and local Ollama models, then experimented with:
+
+- reading the active project and document state
+- resolving parts and applying schematic changes
+- generating and updating PCB layouts
+- routing and design-rule checks
+- compact MCP outputs for smaller local models
+- active-tab inference for linked schematic and PCB documents
+- release gates, smoke tests, EasyEDA log inspection, and manufacturing-image checks
+
+That work helped me identify the smaller, testable improvements represented by the upstream pull requests. It also reinforced that EDA automation needs to verify editor state instead of treating a successful-looking text response as proof that a design operation worked.
 
 ## Visual Outputs
 
-The tooling can export board previews and manufacturing QA images for review.
+These images came from my earlier board-preview and manufacturing-QA experiments.
 
-![Full board manufacturing QA preview](media/manufacturing-qa-full-board.png)
+![Full-board manufacturing QA preview](media/manufacturing-qa-full-board.png)
 
-![Top copper manufacturing QA preview](media/manufacturing-qa-top-copper.png)
+![Top-copper manufacturing QA preview](media/manufacturing-qa-top-copper.png)
 
 ![Silkscreen manufacturing QA preview](media/manufacturing-qa-silkscreen.png)
 
-## Local Model Work
+## What I Am Learning
 
-My local launcher work focuses on testing how far my laptop can push PCB automation with Ollama models. I use smaller models for fast MCP smoke tests, while larger models can be tried for complete board-building runs when latency is acceptable.
+- how an MCP server can expose a complex desktop engineering application safely
+- how EasyEDA represents projects, boards, schematics, PCBs, and component libraries
+- how to turn reproduced editor failures into focused regression tests
+- how to keep destructive document operations retryable after partial failure
+- how to design cancellation semantics without overstating what the runtime can stop
+- how to prepare scoped pull requests that are easier for an open-source maintainer to review
 
-![Ollama MCP launcher icon](media/ollama-mcp-launcher-icon.png)
+## Current Direction
 
-## Validation Status
+I am no longer developing a separate EasyEDA copilot. My current work happens in my [EasyEDA Copilot fork](https://github.com/carter-howell/easyeda-copilot), with focused pull requests submitted to the [BioShot upstream project](https://github.com/biosshot/easyeda-copilot).
 
-I have tested the current toolchain with static release gates and local bridge smoke tests. The project has also produced board previews and manufacturing QA outputs from EasyEDA data. Local model runs are still being tuned because small models can stall, choose parts slowly, or get confused by large tool catalogs without compact profiles and explicit workflow guidance.
-
-I do not treat this as a fully validated manufactured hardware product yet. It is best described as an active PCB automation prototype with working EasyEDA integration and a growing validation workflow.
-
-## What This Demonstrates
-
-- MCP-based control of a professional PCB editor
-- AI-assisted schematic and PCB workflow automation
-- Local Ollama model integration with hardware-design tools
-- Practical tool-output design for smaller local models
-- DRC, routing, manufacturing, and log-readback automation
-- Engineering documentation around an evolving hardware/software toolchain
-
-## Future Improvements
-
-- Improve local-model reliability on complete one-prompt PCB builds.
-- Add clearer model presets for speed, balanced reasoning, and long-context board work.
-- Add more visual examples from successful end-to-end board generation runs.
-- Add a cleaned public demo video once the local workflow is stable enough to showcase.
-- Continue reducing tool ambiguity so smaller models choose the right high-level workflow tool first.
-- Add more measured validation data after boards are fabricated or tested physically.
-
+The four pull requests above are open and under review. I will update this showcase as contributions are revised, merged, or followed by additional work.
